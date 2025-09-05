@@ -110,7 +110,7 @@ export default function Flashcards() {
   // --- Results screen ---
   if (showResults) {
     return (
-      <div className="flashcards-container">
+      <div className="flashcards-container answer-key-container">
         <h2>Answer Key</h2>
         <div className="answer-key">
           {flashcards.map((card, i) => {
@@ -126,8 +126,9 @@ export default function Flashcards() {
             );
           })}
         </div>
-        <p>Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}</p>
-
+        <p>
+          Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
+        </p>
         <div className="button-group">
           <button className="btn-primary" onClick={startPractice}>Try Another Set</button>
           <button className="btn-submit" onClick={() => setShowResults(false)}>Back to Cards</button>

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* vertically center flashcards/input/buttons */
+  justify-content: center; /* vertically center flashcards screen */
   text-align: center;
   padding: 1rem;
   min-height: 100vh;
@@ -96,9 +96,11 @@
   background-color: #15803d;
 }
 
-/* Answer Key container with safe top padding */
-.answer-key {
-  padding-top: 1.5rem; /* only adds space for readability, not cut off */
+/* Answer Key container (flow from top) */
+.answer-key-container {
+  justify-content: flex-start; /* let content start from top */
+  padding-top: 1.5rem;
+  min-height: auto;
 }
 
 /* Each answer spaced nicely */
