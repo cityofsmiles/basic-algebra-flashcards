@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { evaluate, parse } from "mathjs";
 import "./flashcards.css";
 
-// Generate a random algebra expression with proper binomial
+// Generate a random algebra expression with proper binomial and clean constant display
 function generateExpression() {
   // Coefficient ≥ 2
   const coeff1 = Math.floor(Math.random() * 5) + 2; // 2–6
@@ -19,17 +19,17 @@ function generateExpression() {
   // Inner expression: always a proper binomial
   const inner = coeff2 > 0 ? `x + ${coeff2}` : `x - ${Math.abs(coeff2)}`;
 
-  // Expression
+  // Expression for flashcard: format constant nicely
   let expr = `${coeff1}*(${inner})`;
   if (constant !== 0) {
-    expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
+    expr += constant > 0 ? ` + ${constant}` : ` - ${Math.abs(constant)}`;
   }
 
   // Simplified expression for evaluation
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
 
-  // Pretty display
+  // Pretty display for answer key
   let correctDisplay = `${a}x`;
   if (b > 0) correctDisplay += ` + ${b}`;
   else if (b < 0) correctDisplay += ` - ${Math.abs(b)}`;
