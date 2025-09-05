@@ -73,9 +73,14 @@ export default function Flashcards() {
 
   // --- Answer key screen ---
   if (showResults) {
+    const score = flashcards.filter((card, i) =>
+      checkEquivalence(answers[i] || "", card.correctEvalExpr)
+    ).length;
+
     return (
       <div className="answer-key-screen">
         <h2>Answer Key</h2>
+        <p className="score">Score: {score}/{flashcards.length}</p>
         <div className="answer-key">
           {flashcards.map((card, i) => {
             const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
@@ -90,9 +95,6 @@ export default function Flashcards() {
             );
           })}
         </div>
-        <p>
-          Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
-        </p>
         <div className="button-group">
           <button className="btn-primary" onClick={startPractice}>Try Another Set</button>
           <button className="btn-submit" onClick={() => setShowResults(false)}>Back to Cards</button>
