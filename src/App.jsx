@@ -57,9 +57,13 @@ export default function App() {
 
   const checkEquivalence = (userInput, correctExpr) => {
     try {
+      // Normalize input: lowercase, trim spaces
+      const cleaned = userInput.toLowerCase().replace(/\s+/g, "");
+
       const x = Math.floor(Math.random() * 10) + 1;
-      const userVal = evaluate(parse(userInput).toString(), { x });
+      const userVal = evaluate(parse(cleaned).toString(), { x });
       const correctVal = evaluate(correctExpr, { x });
+
       return Math.abs(userVal - correctVal) < 1e-6;
     } catch {
       return false;
