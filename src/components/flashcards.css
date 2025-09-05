@@ -1,10 +1,13 @@
-.flashcard-container {
+.flashcards-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center; /* centers all text, including answer key */
+  padding: 1rem;
 }
 
+/* Flashcard styling */
 .flashcard {
   background: #ffffff;
   width: 280px;
@@ -52,37 +55,56 @@
   background-color: #f0f9ff;
 }
 
+/* Input field centered */
 .input-answer {
+  display: inline-block;
   width: 280px;
   max-width: 90vw;
   padding: 0.8rem;
   font-size: 1rem;
   border-radius: 8px;
   border: 1px solid #ccc;
+  margin: 10px auto;
 }
 
+/* Buttons centered */
+.btn-primary,
+.btn-submit {
+  display: inline-block;
+  margin: 10px auto;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+}
+
+/* Button colors */
 .btn-primary {
   background-color: #2563eb;
   color: white;
-  padding: 0.8rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  border: none;
 }
-
 .btn-primary:hover {
   background-color: #1e40af;
 }
-
 .btn-submit {
   background-color: #16a34a;
   color: white;
-  padding: 0.8rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  border: none;
 }
-
 .btn-submit:hover {
   background-color: #15803d;
+}
+
+/* Answer Key text centered */
+.answer-key p {
+  text-align: center;
+}
+
+/* Optional: spacing for groups of buttons */
+.button-group {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }

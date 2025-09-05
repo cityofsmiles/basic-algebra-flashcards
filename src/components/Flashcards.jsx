@@ -96,10 +96,12 @@ export default function Flashcards() {
   // --- Initial screen ---
   if (!flashcards.length) {
     return (
-      <div className="flashcards-container p-4">
+      <div className="flashcards-container">
         <h1>Algebra Flashcards</h1>
         <div>
-          <button onClick={startPractice}>Start Practice</button>
+          <button className="btn-primary" onClick={startPractice}>
+            Start Practice
+          </button>
         </div>
       </div>
     );
@@ -108,7 +110,7 @@ export default function Flashcards() {
   // --- Results screen ---
   if (showResults) {
     return (
-      <div className="flashcards-container p-4">
+      <div className="flashcards-container">
         <h2>Answer Key</h2>
         <div className="answer-key">
           {flashcards.map((card, i) => {
@@ -127,8 +129,8 @@ export default function Flashcards() {
         <p>Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}</p>
 
         <div className="button-group">
-          <button onClick={startPractice}>Try Another Set</button>
-          <button onClick={() => setShowResults(false)}>Back to Cards</button>
+          <button className="btn-primary" onClick={startPractice}>Try Another Set</button>
+          <button className="btn-submit" onClick={() => setShowResults(false)}>Back to Cards</button>
         </div>
       </div>
     );
@@ -136,7 +138,7 @@ export default function Flashcards() {
 
   // --- Flashcard screen ---
   return (
-    <div className="flashcards-container p-4">
+    <div className="flashcards-container">
       <h1>Question {currentIndex + 1} / {flashcards.length}</h1>
 
       <div
@@ -154,6 +156,7 @@ export default function Flashcards() {
       <div>
         <input
           type="text"
+          className="input-answer"
           placeholder="Your answer"
           value={answers[currentIndex] || ""}
           onChange={(e) => handleAnswer(e.target.value)}
@@ -161,9 +164,9 @@ export default function Flashcards() {
       </div>
 
       <div className="button-group">
-        <button onClick={prevCard}>Previous</button>
-        <button onClick={nextCard}>Next</button>
-        <button onClick={() => setShowResults(true)}>Submit</button>
+        <button className="btn-primary" onClick={prevCard}>Previous</button>
+        <button className="btn-primary" onClick={nextCard}>Next</button>
+        <button className="btn-submit" onClick={() => setShowResults(true)}>Submit</button>
       </div>
     </div>
   );
