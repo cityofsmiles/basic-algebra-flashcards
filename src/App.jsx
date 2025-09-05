@@ -6,8 +6,14 @@ function generateExpression() {
   const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
   const constant = Math.floor(Math.random() * 10) - 5; // -5 to +4
 
-  // Question expression (avoid +0)
-  let expr = `${coeff1}*(x + ${coeff2})`;
+  // Question expression (avoid +0 and 1*)
+  let expr = "";
+  if (coeff1 === 1) {
+    expr = `(x + ${coeff2})`;
+  } else {
+    expr = `${coeff1}*(x + ${coeff2})`;
+  }
+
   if (constant !== 0) {
     expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
   }
