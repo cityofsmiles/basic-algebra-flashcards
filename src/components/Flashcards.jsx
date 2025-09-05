@@ -97,12 +97,14 @@ export default function Flashcards() {
     return (
       <div className="flex flex-col items-center justify-center h-screen w-full p-4">
         <h1 className="text-2xl font-bold mb-6 text-center">Algebra Flashcards</h1>
-        <button
-          onClick={startPractice}
-          className="btn-primary px-6 py-3 text-lg"
-        >
-          Start Practice
-        </button>
+        <div className="flex justify-center w-full">
+          <button
+            onClick={startPractice}
+            className="btn-primary px-6 py-3 text-lg"
+          >
+            Start Practice
+          </button>
+        </div>
       </div>
     );
   }
@@ -129,7 +131,8 @@ export default function Flashcards() {
         <p className="mt-4 font-bold text-center">
           Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
         </p>
-        <div className="flex flex-col items-center w-full mt-6 space-y-4 max-w-xs">
+
+        <div className="flex flex-col items-center mt-6 space-y-4 w-full max-w-xs">
           <button onClick={startPractice} className="btn-primary w-full text-center">
             Try Another Set
           </button>
@@ -170,21 +173,23 @@ export default function Flashcards() {
         className="input-answer mt-6 text-center"
       />
 
-      <div className="flex w-full justify-between mt-6 max-w-xs">
-        <button onClick={prevCard} className="btn-primary w-1/2 mr-2">
+      <div className="flex justify-center mt-6 space-x-4 w-full max-w-xs">
+        <button onClick={prevCard} className="btn-primary px-4 py-2">
           Previous
         </button>
-        <button onClick={nextCard} className="btn-primary w-1/2 ml-2">
+        <button onClick={nextCard} className="btn-primary px-4 py-2">
           Next
         </button>
       </div>
 
-      <button
-        onClick={() => setShowResults(true)}
-        className="btn-submit mt-6 w-full max-w-xs text-center"
-      >
-        Submit
-      </button>
+      <div className="flex justify-center mt-6 w-full max-w-xs">
+        <button
+          onClick={() => setShowResults(true)}
+          className="btn-submit w-full text-center px-6 py-2"
+        >
+          Submit
+        </button>
+      </div>
     </div>
   );
 }
