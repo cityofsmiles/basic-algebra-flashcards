@@ -2,7 +2,7 @@
   "name": "algebra-flashcards-pwa",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://github.com/cityofsmiles/basic-algebra-flashcards.git",
+  "homepage": "https://cityofsmiles.github.io/basic-algebra-flashcards",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
