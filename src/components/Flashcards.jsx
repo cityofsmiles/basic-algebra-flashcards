@@ -71,7 +71,7 @@ export default function Flashcards() {
     );
   }
 
-  // --- Results screen ---
+  // --- Answer key screen ---
   if (showResults) {
     return (
       <div className="answer-key-screen">
@@ -106,9 +106,7 @@ export default function Flashcards() {
   return (
     <div className="flashcards-container">
       <h1>Question {currentIndex + 1} / {flashcards.length}</h1>
-      <div className="flashcard">
-        <div className="flashcard-front">{currentCard.expr}</div>
-      </div>
+      <div className="flashcard">{currentCard.expr}</div>
       <input
         type="text"
         className="input-answer"
