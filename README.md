@@ -11,7 +11,7 @@ A Progressive Web App (PWA) built with **React + Vite** where high school studen
 ---
 
 ## 🚀 Demo
-👉 [Your GitHub Pages Link](https://your-username.github.io/your-repo-name/)
+👉 [Your GitHub Pages Link](https://cityofsmiles.github.io/basic-algebra-flashcards/)
 
 ---
 
@@ -19,5 +19,4 @@ A Progressive Web App (PWA) built with **React + Vite** where high school studen
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://cityofsmiles.github.io/basic-algebra-flashcards/
