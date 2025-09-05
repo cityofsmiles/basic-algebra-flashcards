@@ -3,141 +3,123 @@ import * as math from "mathjs";
 
 // Generate a random algebra expression
 function generateExpression() {
-	  const coeff1 = Math.floor(Math.random() * 5) + 1;
-	    const coeff2 = Math.floor(Math.random() * 5) + 1;
-	      const constant = Math.floor(Math.random() * 10) - 5;
+  const coeff1 = Math.floor(Math.random() * 5) + 1;
+  const coeff2 = Math.floor(Math.random() * 5) + 1;
+  const constant = Math.floor(Math.random() * 10) - 5;
 
-	        const expr = `${coeff1}(x + ${coeff2}) + ${constant}`;
-	          const simplified = math.simplify(expr).toString({ parenthesis: "auto" });
-	            return { expr, simplified };
-	            }
+  const expr = `${coeff1}(x + ${coeff2}) + ${constant}`;
+  const simplified = math.simplify(expr).toString({ parenthesis: "auto" });
+  return { expr, simplified };
+}
 
-	            // Check if two expressions are mathematically equivalent
-	            function isEquivalent(input, correct) {
-	            	  try {
-	            	  	    const simplifiedInput = math.simplify(input);
-	            	  	        const simplifiedCorrect = math.simplify(correct);
-	            	  	            return simplifiedInput.equals(simplifiedCorrect);
-	            	  	              } catch {
-	            	  	              	    return false; // invalid input
-	            	  	              	      }
-	            	  	              	      }
+// Check if two expressions are mathematically equivalent
+function isEquivalent(input, correct) {
+  try {
+    const simplifiedInput = math.simplify(input);
+    const simplifiedCorrect = math.simplify(correct);
+    return simplifiedInput.equals(simplifiedCorrect);
+  } catch {
+    return false; // invalid input
+  }
+}
 
-	            	  	              	      export default function FlashcardApp() {
-	            	  	              	      	  const [flashcards, setFlashcards] = useState([]);
-	            	  	              	      	    const [current, setCurrent] = useState(0);
-	            	  	              	      	      const [answers, setAnswers] = useState([]);
-	            	  	              	      	        const [finished, setFinished] = useState(false);
-	            	  	              	      	          const [input, setInput] = useState("");
+export default function FlashcardApp() {
+  const [flashcards, setFlashcards] = useState([]);
+  const [current, setCurrent] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [finished, setFinished] = useState(false);
+  const [input, setInput] = useState("");
 
-	            	  	              	      	            const startSet = () => {
-	            	  	              	      	            	    const cards = Array.from({ length: 10 }, () => generateExpression());
-	            	  	              	      	            	        setFlashcards(cards);
-	            	  	              	      	            	            setCurrent(0);
-	            	  	              	      	            	                setAnswers([]);
-	            	  	              	      	            	                    setFinished(false);
-	            	  	              	      	            	                        setInput("");
-	            	  	              	      	            	                          };
+  const startSet = () => {
+    const cards = Array.from({ length: 10 }, () => generateExpression());
+    setFlashcards(cards);
+    setCurrent(0);
+    setAnswers([]);
+    setFinished(false);
+    setInput("");
+  };
 
-	            	  	              	      	            	                            const submitAnswer = (ans) => {
-	            	  	              	      	            	                            	    const updated = [...answers];
-	            	  	              	      	            	                            	        updated[current] = ans;
-	            	  	              	      	            	                            	            setAnswers(updated);
+  const submitAnswer = (ans) => {
+    const updated = [...answers];
+    updated[current] = ans;
+    setAnswers(updated);
 
-	            	  	              	      	            	                            	                if (current + 1 < flashcards.length) {
-	            	  	              	      	            	                            	                	      setCurrent(current + 1);
-	            	  	              	      	            	                            	                	            setInput("");
-	            	  	              	      	            	                            	                	                } else {
-	            	  	              	      	            	                            	                	                	      setFinished(true);
-	            	  	              	      	            	                            	                	                	          }
-	            	  	              	      	            	                            	                	                	            };
+    if (current + 1 < flashcards.length) {
+      setCurrent(current + 1);
+      setInput("");
+    } else {
+      setFinished(true);
+    }
+  };
 
-	            	  	              	      	            	                            	                	                	              if (flashcards.length === 0) {
-	            	  	              	      	            	                            	                	                	              	    return (
-	            	  	              	      	            	                            	                	                	              	    	      <div className="p-6 text-center">
-	            	  	              	      	            	                            	                	                	              	    	              <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
-	            	  	              	      	            	                            	                	                	              	    	                      <button
-	            	  	              	      	            	                            	                	                	              	    	                                onClick={startSet}
-	            	  	              	      	            	                            	                	                	              	    	                                          className="bg-blue-600 text-white px-4 py-2 rounded"
-	            	  	              	      	            	                            	                	                	              	    	                                                  >
-	            	  	              	      	            	                            	                	                	              	    	                                                            Start Practice
-	            	  	              	      	            	                            	                	                	              	    	                                                                    </button>
-	            	  	              	      	            	                            	                	                	              	    	                                                                          </div>
-	            	  	              	      	            	                            	                	                	              	    	                                                                              );
-	            	  	              	      	            	                            	                	                	              	    	                                                                                }
+  if (flashcards.length === 0) {
+    return (
+      <div className="p-6 text-center">
+        <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
+        <button
+          onClick={startSet}
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Start Practice
+        </button>
+      </div>
+    );
+  }
 
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  if (finished) {
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    let score = flashcards.reduce(
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	      (acc, card, i) =>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	              isEquivalent(answers[i] || "", card.simplified) ? acc + 1 : acc,
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                    0
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                        );
+  if (finished) {
+    let score = flashcards.reduce(
+      (acc, card, i) =>
+        isEquivalent(answers[i] || "", card.simplified) ? acc + 1 : acc,
+      0
+    );
 
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            return (
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	      <div className="p-6 text-center">
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	              <h2 className="text-xl font-bold mb-4">Answer Key</h2>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      {flashcards.map((card, i) => {
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	          const correct = isEquivalent(answers[i] || "", card.simplified);
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    return (
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	            <div key={i} className="border rounded p-3 mb-3 text-left">
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                          <p>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                          <strong>Q{i + 1}:</strong> {card.expr}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                        </p>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                      <p>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                      Your Answer: {answers[i] || "(none)"}{" "}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                      {correct ? "" : ""} <br />
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                      Correct Answer: {card.simplified}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                    </p>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                </div>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                          );
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                  })}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                          <p className="mt-4 font-bold">Score: {score}/10</p>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                  <button
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                            onClick={startSet}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                      className="bg-green-600 text-white px-4 py-2 rounded mt-4"
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                              >
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                        Try Another Set
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                </button>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                      </div>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                          );
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                            }
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-bold mb-4">Answer Key</h2>
+        {flashcards.map((card, i) => {
+          const correct = isEquivalent(answers[i] || "", card.simplified);
+          return (
+            <div key={i} className="border rounded p-3 mb-3 text-left">
+              <p>
+                <strong>Q{i + 1}:</strong> {card.expr}
+              </p>
+              <p>
+                Your Answer: {answers[i] || "(none)"} {correct ? "✅" : "❌"} <br />
+                Correct Answer: {card.simplified}
+              </p>
+            </div>
+          );
+        })}
+        <p className="mt-4 font-bold">Score: {score}/10</p>
+        <button
+          onClick={startSet}
+          className="bg-green-600 text-white px-4 py-2 rounded mt-4"
+        >
+          Try Another Set
+        </button>
+      </div>
+    );
+  }
 
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                              const card = flashcards[current];
+  const card = flashcards[current];
 
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                return (
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	    <div className="p-6 text-center">
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	          <h2 className="text-xl font-bold mb-4">Flashcard {current + 1}/10</h2>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                <div className="border rounded p-6 text-lg mb-4">{card.expr}</div>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                      <input
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                              type="text"
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                      value={input}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                              onChange={(e) => setInput(e.target.value)}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                      className="border rounded p-2 mr-2"
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                              placeholder="Simplify expression"
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                    />
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                          <button
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                  onClick={() => submitAnswer(input)}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                          className="bg-blue-600 text-white px-4 py-2 rounded"
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                >
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                        Submit
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                              </button>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                                  </div>
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                                    );
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                	                                                                                                                    }
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    	                                                                                                                                                                                                                                                )
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      	                    )
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            	                      })}
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    	                            )
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  	    )
-	            	  	              	      	            	                            	                	                	              	    	                                                                                  }
-	            	  	              	      	            	                            	                	                	              	    )
-	            	  	              	      	            	                            	                	                	              }
-	            	  	              	      	            	                            	                	                }
-	            	  	              	      	            	                            	                }
-	            	  	              	      	            	                            }
-	            	  	              	      	            }
-	            	  	              	      }
-	            	  	              }
-	            	  }
-	            }
+  return (
+    <div className="p-6 text-center">
+      <h2 className="text-xl font-bold mb-4">Flashcard {current + 1}/10</h2>
+      <div className="border rounded p-6 text-lg mb-4">{card.expr}</div>
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        className="border rounded p-2 mr-2"
+        placeholder="Simplify expression"
+      />
+      <button
+        onClick={() => submitAnswer(input)}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Submit
+      </button>
+    </div>
+  );
 }
