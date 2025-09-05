@@ -1,19 +1,23 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { evaluate, parse } from "mathjs";
-import "./flashcards.css"; // CSS for animations
+import "./flashcards.css"; // includes flip & slide animation
 
+// Generate a random algebra expression
 function generateExpression() {
   const coeff1 = Math.floor(Math.random() * 5) + 1;
   const coeff2 = Math.floor(Math.random() * 9) - 4;
   const constant = Math.floor(Math.random() * 10) - 5;
+
   let inner = coeff2 > 0 ? `x + ${coeff2}` : coeff2 < 0 ? `x - ${Math.abs(coeff2)}` : "x";
   let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
   if (constant !== 0) expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
+
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
   let correctDisplay = a === 1 ? "x" : a === -1 ? "-x" : `${a}x`;
   if (b > 0) correctDisplay += ` + ${b}`;
   else if (b < 0) correctDisplay += ` - ${Math.abs(b)}`;
+
   return { expr, correctEvalExpr: `${a}*x + ${b}`, correctDisplay };
 }
 
@@ -28,6 +32,7 @@ export default function Flashcards() {
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
+  // Generate a new set of flashcards
   const startPractice = () => {
     const newSet = Array.from({ length: 10 }, () => generateExpression());
     setFlashcards(newSet);
@@ -35,10 +40,23 @@ export default function Flashcards() {
     setFlipped(false);
     setAnswers({});
     setShowResults(false);
+    setSlideDir("");
   };
 
   const handleAnswer = (value) => {
     setAnswers({ ...answers, [currentIndex]: value });
+  };
+
+  const checkEquivalence = (userInput, correctExpr) => {
+    try {
+      const cleaned = userInput.toLowerCase().replace(/\s+/g, "");
+      const x = Math.floor(Math.random() * 10) + 1;
+      const userVal = evaluate(parse(cleaned).toString(), { x });
+      const correctVal = evaluate(correctExpr, { x });
+      return Math.abs(userVal - correctVal) < 1e-6;
+    } catch {
+      return false;
+    }
   };
 
   const handleTouchStart = (e) => {
@@ -54,34 +72,26 @@ export default function Flashcards() {
   };
 
   const prevCard = () => {
+    if (flashcards.length === 0) return;
     setSlideDir("right");
     setCurrentIndex((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
     setFlipped(false);
   };
 
   const nextCard = () => {
+    if (flashcards.length === 0) return;
     setSlideDir("left");
     setCurrentIndex((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
     setFlipped(false);
-  };
-
-  const checkEquivalence = (userInput, correctExpr) => {
-    try {
-      const cleaned = userInput.toLowerCase().replace(/\s+/g, "");
-      const x = Math.floor(Math.random() * 10) + 1;
-      const userVal = evaluate(parse(cleaned).toString(), { x });
-      const correctVal = evaluate(correctExpr, { x });
-      return Math.abs(userVal - correctVal) < 1e-6;
-    } catch {
-      return false;
-    }
   };
 
   if (!flashcards.length) {
     return (
       <div className="p-4 w-full max-w-md mx-auto flex flex-col items-center">
         <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
-        <button onClick={startPractice} className="btn-primary w-full max-w-xs">Start Practice</button>
+        <button onClick={startPractice} className="btn-primary w-full max-w-xs">
+          Start Practice
+        </button>
       </div>
     );
   }
@@ -105,7 +115,9 @@ export default function Flashcards() {
         <p className="mt-4 font-bold">
           Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
         </p>
-        <button onClick={startPractice} className="btn-primary mt-4 w-full max-w-xs">Try Another Set</button>
+        <button onClick={startPractice} className="btn-primary mt-4 w-full max-w-xs">
+          Try Another Set
+        </button>
       </div>
     );
   }
@@ -141,7 +153,9 @@ export default function Flashcards() {
         <button onClick={nextCard} className="btn-primary w-1/2 ml-2">Next</button>
       </div>
 
-      <button onClick={() => setShowResults(true)} className="btn-submit mt-4 w-full">Submit</button>
+      <button onClick={() => setShowResults(true)} className="btn-submit mt-4 w-full">
+        Submit
+      </button>
     </div>
   );
 }
