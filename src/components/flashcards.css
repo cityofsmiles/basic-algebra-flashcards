@@ -1,11 +1,23 @@
+/* Flashcards container (centered vertically for flashcards) */
 .flashcards-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* vertically center flashcards screen */
+  justify-content: center;
   text-align: center;
   padding: 1rem;
   min-height: 100vh;
+}
+
+/* Answer Key screen (top-aligned) */
+.answer-key-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* start from top */
+  text-align: center;
+  padding: 1.5rem 1rem 2rem;
+  min-height: auto;
 }
 
 /* Flashcard styling */
@@ -56,7 +68,7 @@
   background-color: #f0f9ff;
 }
 
-/* Input field centered */
+/* Input field */
 .input-answer {
   display: inline-block;
   width: 280px;
@@ -68,7 +80,7 @@
   margin: 10px auto;
 }
 
-/* Buttons centered */
+/* Buttons */
 .btn-primary,
 .btn-submit {
   display: inline-block;
@@ -96,13 +108,6 @@
   background-color: #15803d;
 }
 
-/* Answer Key container (flow from top) */
-.answer-key-container {
-  justify-content: flex-start; /* let content start from top */
-  padding-top: 1.5rem;
-  min-height: auto;
-}
-
 /* Each answer spaced nicely */
 .answer-key p {
   text-align: center;
@@ -110,7 +115,7 @@
   line-height: 1.6;
 }
 
-/* Optional: spacing for groups of buttons */
+/* Button group spacing */
 .button-group {
   margin-top: 1rem;
   display: flex;

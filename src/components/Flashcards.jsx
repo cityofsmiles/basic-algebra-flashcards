@@ -110,13 +110,13 @@ export default function Flashcards() {
   // --- Results screen ---
   if (showResults) {
     return (
-      <div className="flashcards-container answer-key-container">
+      <div className="answer-key-screen">
         <h2>Answer Key</h2>
         <div className="answer-key">
           {flashcards.map((card, i) => {
             const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
             return (
-              <div key={i} className="mb-2">
+              <div key={i}>
                 <p>
                   <strong>Q{i + 1}:</strong> {card.expr}<br />
                   Your Answer: {answers[i] || "(none)"} {correct ? "✓" : "✗"}<br />
