@@ -1,23 +1,31 @@
 import React, { useState } from "react";
 import * as math from "mathjs";
 
-// Generate one flashcard
+// --- Utility: normalize student input ---
+function normalizeInput(str) {
+  if (!str) return "";
+  return str
+    .toLowerCase() // normalize case
+    .replace(/(\d)(x)/g, "$1*$2") // 3x → 3*x
+    .replace(/\s+/g, ""); // remove spaces
+}
+
+// --- Generate one flashcard ---
 function generateExpression() {
   const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
   const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
   const constant = Math.floor(Math.random() * 10) - 5; // -5..4
 
-  // Display negative constants with parentheses
   const constStr = constant < 0 ? `(${constant})` : `${constant}`;
 
   // Question (factored form)
   const expr = `${coeff1}*(x + ${coeff2}) + ${constStr}`;
 
-  // Expanded form: ax + b
+  // Expanded form ax + b
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
 
-  // Nicely formatted answer
+  // Pretty answer
   let correctDisplay = "";
   if (a === 1) {
     correctDisplay = "x";
@@ -26,7 +34,6 @@ function generateExpression() {
   } else {
     correctDisplay = `${a}x`;
   }
-
   if (b > 0) {
     correctDisplay += ` + ${b}`;
   } else if (b < 0) {
@@ -34,28 +41,29 @@ function generateExpression() {
   }
 
   return {
-    expr, // question
-    correctEvalExpr: `${a}*x + ${b}`, // for equivalence check
-    correctDisplay, // pretty answer
+    expr,
+    correctEvalExpr: `${a}*x + ${b}`, // for mathjs checking
+    correctDisplay,
   };
 }
 
-// Generate a full set of 10 flashcards
+// --- Generate full set of 10 flashcards ---
 function generateSet() {
-  const cards = [];
-  for (let i = 0; i < 10; i++) {
-    cards.push(generateExpression());
-  }
-  return cards;
+  return Array.from({ length: 10 }, generateExpression);
 }
 
-// Check if two expressions are equivalent
+// --- Equivalence check with normalization ---
 function isEquivalent(input, correctEvalExpr) {
   try {
-    const simplifiedInput = math.simplify(input);
-    const simplifiedCorrect = math.simplify(correctEvalExpr);
+    const normalizedInput = normalizeInput(input);
+    const normalizedCorrect = normalizeInput(correctEvalExpr);
+
+    const simplifiedInput = math.simplify(normalizedInput);
+    const simplifiedCorrect = math.simplify(normalizedCorrect);
+
     return simplifiedInput.equals(simplifiedCorrect);
-  } catch {
+  } catch (err) {
+    console.error("❌ Error in isEquivalent:", err);
     return false;
   }
 }
