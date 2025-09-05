@@ -95,9 +95,11 @@
   background-color: #15803d;
 }
 
-/* Answer Key text centered */
+/* Answer Key text centered with improved spacing */
 .answer-key p {
   text-align: center;
+  margin-bottom: 1.5rem; /* extra spacing between answers */
+  line-height: 1.6;      /* improves readability */
 }
 
 /* Optional: spacing for groups of buttons */
