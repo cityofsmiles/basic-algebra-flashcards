@@ -1,12 +1,12 @@
-/* Flashcards container (centered vertically for flashcards) */
+/* Flashcards screen (vertically centered) */
 .flashcards-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1rem;
   min-height: 100vh;
+  padding: 1rem;
 }
 
 /* Answer Key screen (top-aligned) */
@@ -17,7 +17,13 @@
   justify-content: flex-start; /* start from top */
   text-align: center;
   padding: 1.5rem 1rem 2rem;
-  min-height: auto;
+}
+
+/* Each answer spaced nicely */
+.answer-key p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
 }
 
 /* Flashcard styling */
@@ -32,45 +38,11 @@
   font-size: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  cursor: pointer;
-  perspective: 1000px;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-.flashcard.flip .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-.flashcard-front,
-.flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  padding: 1rem;
-  box-sizing: border-box;
-}
-
-.flashcard-back {
-  transform: rotateY(180deg);
-  background-color: #f0f9ff;
+  margin-bottom: 1rem;
 }
 
 /* Input field */
 .input-answer {
-  display: inline-block;
   width: 280px;
   max-width: 90vw;
   padding: 0.8rem;
@@ -78,6 +50,7 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   margin: 10px auto;
+  display: block;
 }
 
 /* Buttons */
@@ -108,18 +81,11 @@
   background-color: #15803d;
 }
 
-/* Each answer spaced nicely */
-.answer-key p {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-}
-
 /* Button group spacing */
 .button-group {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  margin-top: 1rem;
 }

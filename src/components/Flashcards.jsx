@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { evaluate, parse } from "mathjs";
 import "./flashcards.css";
 
@@ -24,22 +24,15 @@ function generateExpression() {
 export default function Flashcards() {
   const [flashcards, setFlashcards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [flipped, setFlipped] = useState(false);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
-  const [slideDir, setSlideDir] = useState("");
-
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
 
   const startPractice = () => {
     const newSet = Array.from({ length: 10 }, () => generateExpression());
     setFlashcards(newSet);
     setCurrentIndex(0);
-    setFlipped(false);
     setAnswers({});
     setShowResults(false);
-    setSlideDir("");
   };
 
   const handleAnswer = (value) => {
@@ -58,51 +51,22 @@ export default function Flashcards() {
     }
   };
 
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.changedTouches[0].screenX;
-  };
-
-  const handleTouchEnd = (e) => {
-    touchEndX.current = e.changedTouches[0].screenX;
-    const deltaX = touchEndX.current - touchStartX.current;
-    const swipeThreshold = 50;
-    if (deltaX > swipeThreshold) prevCard();
-    else if (deltaX < -swipeThreshold) nextCard();
-  };
-
   const prevCard = () => {
-    if (!flashcards.length) return;
-    setSlideDir("right");
     setCurrentIndex((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
-    setFlipped(false);
   };
 
   const nextCard = () => {
-    if (!flashcards.length) return;
-    setSlideDir("left");
     setCurrentIndex((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
-    setFlipped(false);
   };
-
-  useEffect(() => {
-    if (slideDir) {
-      const timer = setTimeout(() => setSlideDir(""), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [currentIndex, slideDir]);
-
-  const currentCard = flashcards[currentIndex];
 
   // --- Initial screen ---
   if (!flashcards.length) {
     return (
       <div className="flashcards-container">
         <h1>Algebra Flashcards</h1>
-        <div>
-          <button className="btn-primary" onClick={startPractice}>
-            Start Practice
-          </button>
-        </div>
+        <button className="btn-primary" onClick={startPractice}>
+          Start Practice
+        </button>
       </div>
     );
   }
@@ -138,32 +102,20 @@ export default function Flashcards() {
   }
 
   // --- Flashcard screen ---
+  const currentCard = flashcards[currentIndex];
   return (
     <div className="flashcards-container">
       <h1>Question {currentIndex + 1} / {flashcards.length}</h1>
-
-      <div
-        className={`flashcard ${flipped ? "flip" : ""} ${slideDir}`}
-        onClick={() => setFlipped(!flipped)}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className="flashcard-inner">
-          <div className="flashcard-front">{currentCard.expr}</div>
-          <div className="flashcard-back">{currentCard.correctDisplay}</div>
-        </div>
+      <div className="flashcard">
+        <div className="flashcard-front">{currentCard.expr}</div>
       </div>
-
-      <div>
-        <input
-          type="text"
-          className="input-answer"
-          placeholder="Your answer"
-          value={answers[currentIndex] || ""}
-          onChange={(e) => handleAnswer(e.target.value)}
-        />
-      </div>
-
+      <input
+        type="text"
+        className="input-answer"
+        placeholder="Your answer"
+        value={answers[currentIndex] || ""}
+        onChange={(e) => handleAnswer(e.target.value)}
+      />
       <div className="button-group">
         <button className="btn-primary" onClick={prevCard}>Previous</button>
         <button className="btn-primary" onClick={nextCard}>Next</button>
