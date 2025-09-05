@@ -7,16 +7,22 @@ function generateExpression() {
   const coeff2 = Math.floor(Math.random() * 5) + 1;
   const constant = Math.floor(Math.random() * 10) - 5;
 
-  const expr = `${coeff1}(x + ${coeff2}) + ${constant}`;
-  const simplified = math.simplify(expr).toString({ parenthesis: "auto" });
+  // Format constant safely: wrap negatives in parentheses
+  const constStr = constant < 0 ? `(${constant})` : `${constant}`;
+
+  const expr = `${coeff1}(x + ${coeff2}) + ${constStr}`;
+  const simplified = math
+    .simplify(math.parse(expr).expand())
+    .toString({ parenthesis: "auto" });
+
   return { expr, simplified };
 }
 
 // Check if two expressions are mathematically equivalent
 function isEquivalent(input, correct) {
   try {
-    const simplifiedInput = math.simplify(input);
-    const simplifiedCorrect = math.simplify(correct);
+    const simplifiedInput = math.simplify(math.parse(input).expand());
+    const simplifiedCorrect = math.simplify(math.parse(correct).expand());
     return simplifiedInput.equals(simplifiedCorrect);
   } catch {
     return false; // invalid input
