@@ -6,8 +6,11 @@ function generateExpression() {
   const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
   const constant = Math.floor(Math.random() * 10) - 5; // -5..4
 
+  // Always wrap negatives in parentheses
   const constStr = constant < 0 ? `(${constant})` : `${constant}`;
-  const expr = `${coeff1}(x + ${coeff2}) + ${constStr}`;
+
+  // ✅ Add explicit multiplication so mathjs parses it
+  const expr = `${coeff1}*(x + ${coeff2}) + ${constStr}`;
 
   console.log("Generating expression:", expr);
 
