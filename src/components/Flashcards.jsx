@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { evaluate, parse } from "mathjs";
-import "./flashcards.css"; // CSS for flip and swipe animations
+import "./flashcards.css"; // CSS for flip & swipe animations
 
 // Generate a random algebra expression
 function generateExpression() {
-  const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
-  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
-  const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
+  const coeff1 = Math.floor(Math.random() * 5) + 1;
+  const coeff2 = Math.floor(Math.random() * 9) - 4;
+  const constant = Math.floor(Math.random() * 10) - 5;
 
   let inner = coeff2 > 0 ? `x + ${coeff2}` : coeff2 < 0 ? `x - ${Math.abs(coeff2)}` : "x";
   let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
@@ -27,12 +27,11 @@ export default function Flashcards() {
   const [flipped, setFlipped] = useState(false);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
-  const [slideDir, setSlideDir] = useState(""); // "left" or "right" for animation
+  const [slideDir, setSlideDir] = useState("");
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Generate new flashcards
   const startPractice = () => {
     const newSet = Array.from({ length: 10 }, () => generateExpression());
     setFlashcards(newSet);
@@ -43,12 +42,10 @@ export default function Flashcards() {
     setSlideDir("");
   };
 
-  // Handle answer input
   const handleAnswer = (value) => {
     setAnswers({ ...answers, [currentIndex]: value });
   };
 
-  // Check equivalence of user answer
   const checkEquivalence = (userInput, correctExpr) => {
     try {
       const cleaned = userInput.toLowerCase().replace(/\s+/g, "");
@@ -61,7 +58,6 @@ export default function Flashcards() {
     }
   };
 
-  // Swipe handlers
   const handleTouchStart = (e) => {
     touchStartX.current = e.changedTouches[0].screenX;
   };
@@ -96,48 +92,61 @@ export default function Flashcards() {
     }
   }, [currentIndex, slideDir]);
 
+  // --- Initial screen ---
   if (!flashcards.length) {
     return (
-      <div className="p-4 w-full max-w-md mx-auto flex flex-col items-center">
-        <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
-        <button onClick={startPractice} className="btn-primary w-full max-w-xs">
+      <div className="flex flex-col items-center justify-center h-screen w-full p-4">
+        <h1 className="text-2xl font-bold mb-6 text-center">Algebra Flashcards</h1>
+        <button
+          onClick={startPractice}
+          className="btn-primary px-6 py-3 text-lg"
+        >
           Start Practice
         </button>
       </div>
     );
   }
 
+  // --- Results screen ---
   if (showResults) {
     return (
-      <div className="p-4 w-full max-w-md mx-auto">
-        <h2 className="text-xl font-bold mb-2">Answer Key</h2>
-        {flashcards.map((card, i) => {
-          const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
-          return (
-            <div key={i} className="mb-2">
-              <p>
-                <strong>Q{i + 1}:</strong> {card.expr}<br />
-                Your Answer: {answers[i] || "(none)"} {correct ? "✓" : "✗"}<br />
-                Correct Answer: {card.correctDisplay}
-              </p>
-            </div>
-          );
-        })}
-        <p className="mt-4 font-bold">
+      <div className="flex flex-col items-center justify-center h-screen w-full p-4">
+        <h2 className="text-xl font-bold mb-4 text-center">Answer Key</h2>
+        <div className="w-full max-w-md">
+          {flashcards.map((card, i) => {
+            const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
+            return (
+              <div key={i} className="mb-2 border-b pb-2">
+                <p>
+                  <strong>Q{i + 1}:</strong> {card.expr}<br />
+                  Your Answer: {answers[i] || "(none)"} {correct ? "✓" : "✗"}<br />
+                  Correct Answer: {card.correctDisplay}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+        <p className="mt-4 font-bold text-center">
           Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
         </p>
-        <button onClick={startPractice} className="btn-primary mt-4 w-full max-w-xs">
-          Try Another Set
-        </button>
+        <div className="flex flex-col items-center w-full mt-6 space-y-4 max-w-xs">
+          <button onClick={startPractice} className="btn-primary w-full text-center">
+            Try Another Set
+          </button>
+          <button onClick={() => setShowResults(false)} className="btn-submit w-full text-center">
+            Back to Cards
+          </button>
+        </div>
       </div>
     );
   }
 
+  // --- Flashcard screen ---
   const currentCard = flashcards[currentIndex];
 
   return (
-    <div className="flashcard-container p-4 w-full max-w-md mx-auto flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-4">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
+      <h1 className="text-2xl font-bold mb-6 text-center">
         Question {currentIndex + 1} / {flashcards.length}
       </h1>
 
@@ -158,10 +167,10 @@ export default function Flashcards() {
         placeholder="Your answer"
         value={answers[currentIndex] || ""}
         onChange={(e) => handleAnswer(e.target.value)}
-        className="input-answer"
+        className="input-answer mt-6 text-center"
       />
 
-      <div className="flex w-full justify-between mt-4">
+      <div className="flex w-full justify-between mt-6 max-w-xs">
         <button onClick={prevCard} className="btn-primary w-1/2 mr-2">
           Previous
         </button>
@@ -172,7 +181,7 @@ export default function Flashcards() {
 
       <button
         onClick={() => setShowResults(true)}
-        className="btn-submit mt-4 w-full"
+        className="btn-submit mt-6 w-full max-w-xs text-center"
       >
         Submit
       </button>
