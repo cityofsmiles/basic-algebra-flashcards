@@ -21,12 +21,13 @@
   max-height: 100vh; /* mobile-safe */
 }
 
-/* Score styling */
+/* Score styling with extra top spacing */
 .score {
   font-size: 1.7rem;      /* bigger text */
   font-weight: bold;       /* bold */
   color: #2563eb;          /* blue primary */
-  margin-bottom: 1.5rem;   /* spacing from answers */
+  margin-top: 2rem;        /* increased top spacing */
+  margin-bottom: 1rem;     /* spacing from Answer Key heading */
   text-align: center;
 }
 
