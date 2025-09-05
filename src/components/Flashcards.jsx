@@ -2,20 +2,25 @@ import React, { useState } from "react";
 import { evaluate, parse } from "mathjs";
 import "./flashcards.css";
 
-// Generate a random algebra expression with mandatory coefficient
+// Generate a random algebra expression with proper binomial
 function generateExpression() {
-  // Ensure coefficient is never 1
+  // Coefficient ≥ 2
   const coeff1 = Math.floor(Math.random() * 5) + 2; // 2–6
 
-  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
+  // Inner term: b ≠ 0 to ensure proper binomial
+  let coeff2;
+  do {
+    coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
+  } while (coeff2 === 0); // retry if 0
+
+  // Constant term can be anything
   const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
 
-  // Inner expression: x + b, x - b, or just x
-  let inner = coeff2 > 0 ? `x + ${coeff2}` : coeff2 < 0 ? `x - ${Math.abs(coeff2)}` : "x";
+  // Inner expression: always a proper binomial
+  const inner = coeff2 > 0 ? `x + ${coeff2}` : `x - ${Math.abs(coeff2)}`;
 
-  // Always multiply inner by coeff1
+  // Expression
   let expr = `${coeff1}*(${inner})`;
-
   if (constant !== 0) {
     expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
   }
