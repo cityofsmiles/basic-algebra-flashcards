@@ -1,13 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// ✅ Replace with your GitHub repo name
-const repoName = "cityofsmiles/basic-algebra-flashcards";
-
 export default defineConfig({
-  plugins: [react()],
-  base: `/${repoName}/`,
-  build: {
-    outDir: "dist",
-  },
-});
+	  plugins: [react()],
+	    base: "/basic-algebra-flashcards/", //  MUST match repo name
+	      build: {
+	      	    outDir: "dist",
+	      	      },
+	      	      });
+	      
+

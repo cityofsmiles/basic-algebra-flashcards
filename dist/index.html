@@ -2,14 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#2563eb" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+      />
     <title>Algebra Flashcards</title>
-    <script type="module" crossorigin src="/cityofsmiles/basic-algebra-flashcards/assets/index-qOCd_p8u.js"></script>
-    <link rel="stylesheet" crossorigin href="/cityofsmiles/basic-algebra-flashcards/assets/index-CBO7nTwG.css">
+
+    <!--  PWA manifest -->
+    <link rel="manifest" href="/basic-algebra-flashcards/manifest.json" />
+
+    <!--  Theme color for PWA -->
+    <meta name="theme-color" content="#2563eb" />
+
+    <!--  Favicon (optional: reuse 192x192 icon) -->
+    <link rel="icon" type="image/png" href="/basic-algebra-flashcards/icons/icon-192.png" />
+
+    <!--  Apple-specific icons for iOS PWA install -->
+    <link rel="apple-touch-icon" href="/basic-algebra-flashcards/icons/icon-192.png" />
+
+    <!--  Ensure app can be added to iOS home screen -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script type="module" crossorigin src="/basic-algebra-flashcards/assets/index-qOCd_p8u.js"></script>
+    <link rel="stylesheet" crossorigin href="/basic-algebra-flashcards/assets/index-CBO7nTwG.css">
   </head>
   <body>
     <div id="root"></div>
+
+    <!--  Vite entrypoint -->
   </body>
-</html>
+  </html>
