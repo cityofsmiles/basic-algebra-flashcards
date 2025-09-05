@@ -2,9 +2,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* start from top to show all content */
-  text-align: center; /* centers all text, including answer key */
-  padding: 1rem 0 2rem; /* top + bottom padding */
+  justify-content: center; /* vertically center flashcards/input/buttons */
+  text-align: center;
+  padding: 1rem;
   min-height: 100vh;
 }
 
@@ -96,14 +96,15 @@
   background-color: #15803d;
 }
 
-/* Answer Key container and spacing */
+/* Answer Key container with safe top padding */
 .answer-key {
-  padding-top: 1rem; /* space from top so first answers aren’t hidden */
+  padding-top: 1.5rem; /* only adds space for readability, not cut off */
 }
 
+/* Each answer spaced nicely */
 .answer-key p {
   text-align: center;
-  margin-bottom: 1.5rem; /* spacing between answers */
+  margin-bottom: 1.5rem;
   line-height: 1.6;
 }
 
