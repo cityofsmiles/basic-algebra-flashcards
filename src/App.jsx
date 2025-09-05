@@ -6,22 +6,34 @@ function generateExpression() {
   const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
   const constant = Math.floor(Math.random() * 10) - 5; // -5..4
 
-  // Always show negatives inside parentheses
   const constStr = constant < 0 ? `(${constant})` : `${constant}`;
   const expr = `${coeff1}(x + ${coeff2}) + ${constStr}`;
 
-  // Expand and simplify properly
-  const expanded = math.expand(expr);
-  const simplified = math.simplify(expanded).toString({ parenthesis: "auto" });
+  console.log("Generating expression:", expr);
 
-  return { expr, simplified };
+  try {
+    const expanded = math.expand(expr);
+    const simplified = math
+      .simplify(expanded)
+      .toString({ parenthesis: "auto" });
+
+    console.log("Expanded:", expanded.toString());
+    console.log("Simplified:", simplified);
+
+    return { expr, simplified };
+  } catch (err) {
+    console.error("❌ Error in generateExpression:", err);
+    return { expr, simplified: "ERROR" };
+  }
 }
 
 function generateSet() {
+  console.log("Generating a set of flashcards...");
   const cards = [];
   for (let i = 0; i < 10; i++) {
     cards.push(generateExpression());
   }
+  console.log("Generated set:", cards);
   return cards;
 }
 
@@ -29,8 +41,15 @@ function isEquivalent(input, correct) {
   try {
     const expandedInput = math.simplify(math.expand(input));
     const expandedCorrect = math.simplify(math.expand(correct));
-    return expandedInput.equals(expandedCorrect);
-  } catch {
+    const equal = expandedInput.equals(expandedCorrect);
+
+    console.log(
+      `Checking equivalence: input="${input}" correct="${correct}" → ${equal}`
+    );
+
+    return equal;
+  } catch (err) {
+    console.error("❌ Error in isEquivalent:", err);
     return false;
   }
 }
@@ -42,7 +61,9 @@ export default function App() {
   const [showKey, setShowKey] = useState(false);
 
   const startPractice = () => {
-    setCards(generateSet());
+    console.log("▶️ Start Practice clicked");
+    const newSet = generateSet();
+    setCards(newSet);
     setCurrent(0);
     setAnswers([]);
     setShowKey(false);
@@ -51,13 +72,16 @@ export default function App() {
   const handleAnswer = (e) => {
     const newAnswers = [...answers];
     newAnswers[current] = e.target.value;
+    console.log(`Answer entered for card ${current + 1}:`, e.target.value);
     setAnswers(newAnswers);
   };
 
   const nextCard = () => {
     if (current < cards.length - 1) {
+      console.log(`➡️ Moving to card ${current + 2}`);
       setCurrent(current + 1);
     } else {
+      console.log("✅ All cards answered, showing key");
       setShowKey(true);
     }
   };
@@ -65,7 +89,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
       <h1 className="text-3xl font-bold mb-6 text-center">
-        Algebra Flashcards
+        Algebra Flashcards (Debug Mode)
       </h1>
 
       {!cards.length && (
