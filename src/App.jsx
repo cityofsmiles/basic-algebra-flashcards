@@ -3,22 +3,20 @@ import { evaluate, parse } from "mathjs";
 
 function generateExpression() {
   const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
-  const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
-  const constant = Math.floor(Math.random() * 10) - 5; // -5 to +4
+  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4 (can be negative now!)
+  const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
+
+  // Inner expression: (x + b) or (x - b)
+  let inner = coeff2 >= 0 ? `x + ${coeff2}` : `x - ${Math.abs(coeff2)}`;
 
   // Question expression (avoid +0 and 1*)
-  let expr = "";
-  if (coeff1 === 1) {
-    expr = `(x + ${coeff2})`;
-  } else {
-    expr = `${coeff1}*(x + ${coeff2})`;
-  }
+  let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
 
   if (constant !== 0) {
     expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
   }
 
-  // Correct simplified form: expand to ax + b
+  // Simplify ax + b
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
 
