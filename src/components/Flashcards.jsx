@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { evaluate, parse } from "mathjs";
-import "./flashcards.css"; // CSS for flip & swipe animations
+import "./flashcards.css";
 
 // Generate a random algebra expression
 function generateExpression() {
@@ -84,7 +84,6 @@ export default function Flashcards() {
     setFlipped(false);
   };
 
-  // Reset slide animation class after transition
   useEffect(() => {
     if (slideDir) {
       const timer = setTimeout(() => setSlideDir(""), 300);
@@ -112,9 +111,9 @@ export default function Flashcards() {
   // --- Results screen ---
   if (showResults) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen w-full p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
         <h2 className="text-xl font-bold mb-4 text-center">Answer Key</h2>
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md text-center">
           {flashcards.map((card, i) => {
             const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
             return (
