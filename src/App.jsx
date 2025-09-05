@@ -1,131 +1,144 @@
 import React, { useState } from "react";
 import * as math from "mathjs";
 
-// Generate a random algebra expression
 function generateExpression() {
-  const coeff1 = Math.floor(Math.random() * 5) + 1;
-  const coeff2 = Math.floor(Math.random() * 5) + 1;
-  const constant = Math.floor(Math.random() * 10) - 5;
+  const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
+  const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
+  const constant = Math.floor(Math.random() * 10) - 5; // -5..4
 
-  // Format constant safely: wrap negatives in parentheses
+  // Always show negatives inside parentheses
   const constStr = constant < 0 ? `(${constant})` : `${constant}`;
-
   const expr = `${coeff1}(x + ${coeff2}) + ${constStr}`;
-  const simplified = math
-    .simplify(math.parse(expr).expand())
-    .toString({ parenthesis: "auto" });
+
+  // Expand and simplify properly
+  const expanded = math.expand(expr);
+  const simplified = math.simplify(expanded).toString({ parenthesis: "auto" });
 
   return { expr, simplified };
 }
 
-// Check if two expressions are mathematically equivalent
+function generateSet() {
+  const cards = [];
+  for (let i = 0; i < 10; i++) {
+    cards.push(generateExpression());
+  }
+  return cards;
+}
+
 function isEquivalent(input, correct) {
   try {
-    const simplifiedInput = math.simplify(math.parse(input).expand());
-    const simplifiedCorrect = math.simplify(math.parse(correct).expand());
-    return simplifiedInput.equals(simplifiedCorrect);
+    const expandedInput = math.simplify(math.expand(input));
+    const expandedCorrect = math.simplify(math.expand(correct));
+    return expandedInput.equals(expandedCorrect);
   } catch {
-    return false; // invalid input
+    return false;
   }
 }
 
-export default function FlashcardApp() {
-  const [flashcards, setFlashcards] = useState([]);
+export default function App() {
+  const [cards, setCards] = useState([]);
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState([]);
-  const [finished, setFinished] = useState(false);
-  const [input, setInput] = useState("");
+  const [showKey, setShowKey] = useState(false);
 
-  const startSet = () => {
-    const cards = Array.from({ length: 10 }, () => generateExpression());
-    setFlashcards(cards);
+  const startPractice = () => {
+    setCards(generateSet());
     setCurrent(0);
     setAnswers([]);
-    setFinished(false);
-    setInput("");
+    setShowKey(false);
   };
 
-  const submitAnswer = (ans) => {
-    const updated = [...answers];
-    updated[current] = ans;
-    setAnswers(updated);
+  const handleAnswer = (e) => {
+    const newAnswers = [...answers];
+    newAnswers[current] = e.target.value;
+    setAnswers(newAnswers);
+  };
 
-    if (current + 1 < flashcards.length) {
+  const nextCard = () => {
+    if (current < cards.length - 1) {
       setCurrent(current + 1);
-      setInput("");
     } else {
-      setFinished(true);
+      setShowKey(true);
     }
   };
 
-  if (flashcards.length === 0) {
-    return (
-      <div className="p-6 text-center">
-        <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Algebra Flashcards
+      </h1>
+
+      {!cards.length && (
         <button
-          onClick={startSet}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          onClick={startPractice}
+          className="px-6 py-3 bg-blue-600 text-white rounded-2xl shadow hover:bg-blue-700"
         >
           Start Practice
         </button>
-      </div>
-    );
-  }
+      )}
 
-  if (finished) {
-    let score = flashcards.reduce(
-      (acc, card, i) =>
-        isEquivalent(answers[i] || "", card.simplified) ? acc + 1 : acc,
-      0
-    );
+      {cards.length > 0 && !showKey && (
+        <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow">
+          <p className="text-lg font-medium mb-4">
+            Card {current + 1} of {cards.length}
+          </p>
+          <p className="text-xl font-semibold mb-4">
+            Simplify: <code>{cards[current].expr}</code>
+          </p>
+          <input
+            type="text"
+            value={answers[current] || ""}
+            onChange={handleAnswer}
+            placeholder="Enter simplified expression"
+            className="w-full border p-2 rounded mb-4"
+          />
+          <button
+            onClick={nextCard}
+            className="px-4 py-2 bg-green-600 text-white rounded-2xl shadow hover:bg-green-700"
+          >
+            {current === cards.length - 1 ? "Finish" : "Next"}
+          </button>
+        </div>
+      )}
 
-    return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold mb-4">Answer Key</h2>
-        {flashcards.map((card, i) => {
-          const correct = isEquivalent(answers[i] || "", card.simplified);
-          return (
-            <div key={i} className="border rounded p-3 mb-3 text-left">
-              <p>
-                <strong>Q{i + 1}:</strong> {card.expr}
-              </p>
-              <p>
-                Your Answer: {answers[i] || "(none)"} {correct ? "✅" : "❌"} <br />
-                Correct Answer: {card.simplified}
-              </p>
-            </div>
-          );
-        })}
-        <p className="mt-4 font-bold">Score: {score}/10</p>
-        <button
-          onClick={startSet}
-          className="bg-green-600 text-white px-4 py-2 rounded mt-4"
-        >
-          Try Another Set
-        </button>
-      </div>
-    );
-  }
-
-  const card = flashcards[current];
-
-  return (
-    <div className="p-6 text-center">
-      <h2 className="text-xl font-bold mb-4">Flashcard {current + 1}/10</h2>
-      <div className="border rounded p-6 text-lg mb-4">{card.expr}</div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="border rounded p-2 mr-2"
-        placeholder="Simplify expression"
-      />
-      <button
-        onClick={() => submitAnswer(input)}
-        className="bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Submit
-      </button>
+      {showKey && (
+        <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow">
+          <h2 className="text-2xl font-bold mb-4">Answer Key</h2>
+          {cards.map((card, i) => {
+            const correct = isEquivalent(answers[i], card.simplified);
+            return (
+              <div key={i} className="mb-3">
+                <p>
+                  <strong>Q{i + 1}:</strong> {card.expr}
+                </p>
+                <p>
+                  Your Answer: {answers[i] || "(none)"}{" "}
+                  {correct ? (
+                    <span className="text-green-600 font-bold">✓</span>
+                  ) : (
+                    <span className="text-red-600 font-bold">✗</span>
+                  )}
+                </p>
+                <p>Correct Answer: {card.simplified}</p>
+              </div>
+            );
+          })}
+          <p className="mt-4 font-bold">
+            Score:{" "}
+            {
+              cards.filter((c, i) => isEquivalent(answers[i], c.simplified))
+                .length
+            }
+            /{cards.length}
+          </p>
+          <button
+            onClick={startPractice}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-2xl shadow hover:bg-blue-700"
+          >
+            Try Another Set
+          </button>
+        </div>
+      )}
     </div>
   );
 }
