@@ -91,18 +91,15 @@ export default function Flashcards() {
     }
   }, [currentIndex, slideDir]);
 
+  const currentCard = flashcards[currentIndex];
+
   // --- Initial screen ---
   if (!flashcards.length) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen w-full p-4">
-        <h1 className="text-2xl font-bold mb-6 text-center">Algebra Flashcards</h1>
-        <div className="flex justify-center">
-          <button
-            onClick={startPractice}
-            className="btn-primary px-8 py-3 text-lg"
-          >
-            Start Practice
-          </button>
+      <div className="flashcards-container p-4">
+        <h1>Algebra Flashcards</h1>
+        <div>
+          <button onClick={startPractice}>Start Practice</button>
         </div>
       </div>
     );
@@ -111,13 +108,13 @@ export default function Flashcards() {
   // --- Results screen ---
   if (showResults) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
-        <h2 className="text-xl font-bold mb-4 text-center">Answer Key</h2>
-        <div className="w-full max-w-md text-center">
+      <div className="flashcards-container p-4">
+        <h2>Answer Key</h2>
+        <div className="answer-key">
           {flashcards.map((card, i) => {
             const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
             return (
-              <div key={i} className="mb-2 border-b pb-2">
+              <div key={i} className="mb-2">
                 <p>
                   <strong>Q{i + 1}:</strong> {card.expr}<br />
                   Your Answer: {answers[i] || "(none)"} {correct ? "✓" : "✗"}<br />
@@ -127,30 +124,20 @@ export default function Flashcards() {
             );
           })}
         </div>
-        <p className="mt-4 font-bold text-center">
-          Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}
-        </p>
+        <p>Score: {flashcards.filter((card, i) => checkEquivalence(answers[i] || "", card.correctEvalExpr)).length}/{flashcards.length}</p>
 
-        <div className="flex flex-col items-center mt-6 space-y-4">
-          <button onClick={startPractice} className="btn-primary px-8 py-2">
-            Try Another Set
-          </button>
-          <button onClick={() => setShowResults(false)} className="btn-submit px-8 py-2">
-            Back to Cards
-          </button>
+        <div className="button-group">
+          <button onClick={startPractice}>Try Another Set</button>
+          <button onClick={() => setShowResults(false)}>Back to Cards</button>
         </div>
       </div>
     );
   }
 
   // --- Flashcard screen ---
-  const currentCard = flashcards[currentIndex];
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full p-4">
-      <h1 className="text-2xl font-bold mb-6 text-center">
-        Question {currentIndex + 1} / {flashcards.length}
-      </h1>
+    <div className="flashcards-container p-4">
+      <h1>Question {currentIndex + 1} / {flashcards.length}</h1>
 
       <div
         className={`flashcard ${flipped ? "flip" : ""} ${slideDir}`}
@@ -164,30 +151,19 @@ export default function Flashcards() {
         </div>
       </div>
 
-      <input
-        type="text"
-        placeholder="Your answer"
-        value={answers[currentIndex] || ""}
-        onChange={(e) => handleAnswer(e.target.value)}
-        className="input-answer mt-6 text-center"
-      />
-
-      <div className="flex justify-center mt-6 space-x-4">
-        <button onClick={prevCard} className="btn-primary px-8 py-2">
-          Previous
-        </button>
-        <button onClick={nextCard} className="btn-primary px-8 py-2">
-          Next
-        </button>
+      <div>
+        <input
+          type="text"
+          placeholder="Your answer"
+          value={answers[currentIndex] || ""}
+          onChange={(e) => handleAnswer(e.target.value)}
+        />
       </div>
 
-      <div className="flex justify-center mt-6">
-        <button
-          onClick={() => setShowResults(true)}
-          className="btn-submit px-12 py-2"
-        >
-          Submit
-        </button>
+      <div className="button-group">
+        <button onClick={prevCard}>Previous</button>
+        <button onClick={nextCard}>Next</button>
+        <button onClick={() => setShowResults(true)}>Submit</button>
       </div>
     </div>
   );
