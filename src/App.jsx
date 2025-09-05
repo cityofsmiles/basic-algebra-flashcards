@@ -3,13 +3,20 @@ import { evaluate, parse } from "mathjs";
 
 function generateExpression() {
   const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
-  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4 (can be negative now!)
+  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
   const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
 
-  // Inner expression: (x + b) or (x - b)
-  let inner = coeff2 >= 0 ? `x + ${coeff2}` : `x - ${Math.abs(coeff2)}`;
+  // Inner expression: (x + b), (x - b), or just (x) if b=0
+  let inner = "";
+  if (coeff2 > 0) {
+    inner = `x + ${coeff2}`;
+  } else if (coeff2 < 0) {
+    inner = `x - ${Math.abs(coeff2)}`;
+  } else {
+    inner = "x";
+  }
 
-  // Question expression (avoid +0 and 1*)
+  // Question expression (avoid 1* and +0)
   let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
 
   if (constant !== 0) {
