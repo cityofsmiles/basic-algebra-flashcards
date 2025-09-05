@@ -9,18 +9,15 @@ function generateExpression() {
   // Always wrap negatives in parentheses
   const constStr = constant < 0 ? `(${constant})` : `${constant}`;
 
-  // ✅ Add explicit multiplication so mathjs parses it
+  // Explicit multiplication so mathjs parses it
   const expr = `${coeff1}*(x + ${coeff2}) + ${constStr}`;
 
   console.log("Generating expression:", expr);
 
   try {
-    const expanded = math.expand(expr);
-    const simplified = math
-      .simplify(expanded)
-      .toString({ parenthesis: "auto" });
+    // ✅ math.simplify works in mathjs v12
+    const simplified = math.simplify(expr).toString({ parenthesis: "auto" });
 
-    console.log("Expanded:", expanded.toString());
     console.log("Simplified:", simplified);
 
     return { expr, simplified };
@@ -42,9 +39,9 @@ function generateSet() {
 
 function isEquivalent(input, correct) {
   try {
-    const expandedInput = math.simplify(math.expand(input));
-    const expandedCorrect = math.simplify(math.expand(correct));
-    const equal = expandedInput.equals(expandedCorrect);
+    const simplifiedInput = math.simplify(input);
+    const simplifiedCorrect = math.simplify(correct);
+    const equal = simplifiedInput.equals(simplifiedCorrect);
 
     console.log(
       `Checking equivalence: input="${input}" correct="${correct}" → ${equal}`
