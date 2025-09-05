@@ -79,8 +79,11 @@ export default function Flashcards() {
 
     return (
       <div className="answer-key-screen">
-        <h2>Answer Key</h2>
+        {/* Score comes first */}
         <p className="score">Score: {score}/{flashcards.length}</p>
+        {/* Then Answer Key heading */}
+        <h2>Answer Key</h2>
+
         <div className="answer-key">
           {flashcards.map((card, i) => {
             const correct = checkEquivalence(answers[i] || "", card.correctEvalExpr);
