@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import FlashcardApp from "./App";
+import Flashcards from "./components/Flashcards"; // Updated import
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <FlashcardApp />
+    <Flashcards />
   </React.StrictMode>
 );
 

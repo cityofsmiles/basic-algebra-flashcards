@@ -1,0 +1,49 @@
+.flashcard {
+  position: relative;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Slide left/right animation */
+.flashcard.left {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.flashcard.right {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Flip animation remains */
+.flashcard-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard-front, .flashcard-back {
+  backface-visibility: hidden;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #1e40af;
+}
+
+.btn-submit {
+  background-color: #16a34a;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+}
