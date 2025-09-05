@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { evaluate, parse } from "mathjs";
-import "./flashcards.css"; // includes flip & slide animation
+import "./flashcards.css"; // CSS for flip and swipe animations
 
 // Generate a random algebra expression
 function generateExpression() {
-  const coeff1 = Math.floor(Math.random() * 5) + 1;
-  const coeff2 = Math.floor(Math.random() * 9) - 4;
-  const constant = Math.floor(Math.random() * 10) - 5;
+  const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
+  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
+  const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
 
   let inner = coeff2 > 0 ? `x + ${coeff2}` : coeff2 < 0 ? `x - ${Math.abs(coeff2)}` : "x";
   let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
@@ -18,7 +18,7 @@ function generateExpression() {
   if (b > 0) correctDisplay += ` + ${b}`;
   else if (b < 0) correctDisplay += ` - ${Math.abs(b)}`;
 
-  return { expr, correctEvalExpr: `${a}*x + ${b}`, correctDisplay };
+  return { expr: expr || "x", correctEvalExpr: `${a}*x + ${b}`, correctDisplay };
 }
 
 export default function Flashcards() {
@@ -27,12 +27,12 @@ export default function Flashcards() {
   const [flipped, setFlipped] = useState(false);
   const [answers, setAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
-  const [slideDir, setSlideDir] = useState(""); // "left" or "right"
+  const [slideDir, setSlideDir] = useState(""); // "left" or "right" for animation
 
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  // Generate a new set of flashcards
+  // Generate new flashcards
   const startPractice = () => {
     const newSet = Array.from({ length: 10 }, () => generateExpression());
     setFlashcards(newSet);
@@ -43,10 +43,12 @@ export default function Flashcards() {
     setSlideDir("");
   };
 
+  // Handle answer input
   const handleAnswer = (value) => {
     setAnswers({ ...answers, [currentIndex]: value });
   };
 
+  // Check equivalence of user answer
   const checkEquivalence = (userInput, correctExpr) => {
     try {
       const cleaned = userInput.toLowerCase().replace(/\s+/g, "");
@@ -59,6 +61,7 @@ export default function Flashcards() {
     }
   };
 
+  // Swipe handlers
   const handleTouchStart = (e) => {
     touchStartX.current = e.changedTouches[0].screenX;
   };
@@ -72,18 +75,26 @@ export default function Flashcards() {
   };
 
   const prevCard = () => {
-    if (flashcards.length === 0) return;
+    if (!flashcards.length) return;
     setSlideDir("right");
     setCurrentIndex((prev) => (prev === 0 ? flashcards.length - 1 : prev - 1));
     setFlipped(false);
   };
 
   const nextCard = () => {
-    if (flashcards.length === 0) return;
+    if (!flashcards.length) return;
     setSlideDir("left");
     setCurrentIndex((prev) => (prev === flashcards.length - 1 ? 0 : prev + 1));
     setFlipped(false);
   };
+
+  // Reset slide animation class after transition
+  useEffect(() => {
+    if (slideDir) {
+      const timer = setTimeout(() => setSlideDir(""), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, slideDir]);
 
   if (!flashcards.length) {
     return (
@@ -126,7 +137,9 @@ export default function Flashcards() {
 
   return (
     <div className="flashcard-container p-4 w-full max-w-md mx-auto flex flex-col items-center">
-      <h1 className="text-2xl font-bold mb-4">Question {currentIndex + 1} / {flashcards.length}</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Question {currentIndex + 1} / {flashcards.length}
+      </h1>
 
       <div
         className={`flashcard ${flipped ? "flip" : ""} ${slideDir}`}
@@ -149,11 +162,18 @@ export default function Flashcards() {
       />
 
       <div className="flex w-full justify-between mt-4">
-        <button onClick={prevCard} className="btn-primary w-1/2 mr-2">Previous</button>
-        <button onClick={nextCard} className="btn-primary w-1/2 ml-2">Next</button>
+        <button onClick={prevCard} className="btn-primary w-1/2 mr-2">
+          Previous
+        </button>
+        <button onClick={nextCard} className="btn-primary w-1/2 ml-2">
+          Next
+        </button>
       </div>
 
-      <button onClick={() => setShowResults(true)} className="btn-submit mt-4 w-full">
+      <button
+        onClick={() => setShowResults(true)}
+        className="btn-submit mt-4 w-full"
+      >
         Submit
       </button>
     </div>
