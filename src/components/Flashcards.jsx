@@ -2,23 +2,38 @@ import React, { useState } from "react";
 import { evaluate, parse } from "mathjs";
 import "./flashcards.css";
 
-// Generate a random algebra expression
+// Generate a random algebra expression with mandatory coefficient
 function generateExpression() {
-  const coeff1 = Math.floor(Math.random() * 5) + 1;
-  const coeff2 = Math.floor(Math.random() * 9) - 4;
-  const constant = Math.floor(Math.random() * 10) - 5;
+  // Ensure coefficient is never 1
+  const coeff1 = Math.floor(Math.random() * 5) + 2; // 2–6
 
+  const coeff2 = Math.floor(Math.random() * 9) - 4; // -4 … +4
+  const constant = Math.floor(Math.random() * 10) - 5; // -5 … +4
+
+  // Inner expression: x + b, x - b, or just x
   let inner = coeff2 > 0 ? `x + ${coeff2}` : coeff2 < 0 ? `x - ${Math.abs(coeff2)}` : "x";
-  let expr = coeff1 === 1 ? `(${inner})` : `${coeff1}*(${inner})`;
-  if (constant !== 0) expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
 
+  // Always multiply inner by coeff1
+  let expr = `${coeff1}*(${inner})`;
+
+  if (constant !== 0) {
+    expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
+  }
+
+  // Simplified expression for evaluation
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
-  let correctDisplay = a === 1 ? "x" : a === -1 ? "-x" : `${a}x`;
+
+  // Pretty display
+  let correctDisplay = `${a}x`;
   if (b > 0) correctDisplay += ` + ${b}`;
   else if (b < 0) correctDisplay += ` - ${Math.abs(b)}`;
 
-  return { expr: expr || "x", correctEvalExpr: `${a}*x + ${b}`, correctDisplay };
+  return {
+    expr,
+    correctEvalExpr: `${a}*x + ${b}`,
+    correctDisplay,
+  };
 }
 
 export default function Flashcards() {
@@ -79,9 +94,8 @@ export default function Flashcards() {
 
     return (
       <div className="answer-key-screen">
-        {/* Score comes first */}
+        {/* Score first */}
         <p className="score">Score: {score}/{flashcards.length}</p>
-        {/* Then Answer Key heading */}
         <h2>Answer Key</h2>
 
         <div className="answer-key">
