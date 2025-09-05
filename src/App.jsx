@@ -1,31 +1,22 @@
 import React, { useState } from "react";
-import * as math from "mathjs";
+import { evaluate, parse } from "mathjs";
 
-// --- Utility: normalize student input ---
-function normalizeInput(str) {
-  if (!str) return "";
-  return str
-    .toLowerCase() // normalize case
-    .replace(/(\d)(x)/g, "$1*$2") // 3x → 3*x
-    .replace(/\s+/g, ""); // remove spaces
-}
-
-// --- Generate one flashcard ---
 function generateExpression() {
   const coeff1 = Math.floor(Math.random() * 5) + 1; // 1–5
   const coeff2 = Math.floor(Math.random() * 5) + 1; // 1–5
-  const constant = Math.floor(Math.random() * 10) - 5; // -5..4
+  const constant = Math.floor(Math.random() * 10) - 5; // -5 to +4
 
-  const constStr = constant < 0 ? `(${constant})` : `${constant}`;
+  // Question expression (avoid +0)
+  let expr = `${coeff1}*(x + ${coeff2})`;
+  if (constant !== 0) {
+    expr += ` + ${constant < 0 ? `(${constant})` : constant}`;
+  }
 
-  // Question (factored form)
-  const expr = `${coeff1}*(x + ${coeff2}) + ${constStr}`;
-
-  // Expanded form ax + b
+  // Correct simplified form: expand to ax + b
   const a = coeff1;
   const b = coeff1 * coeff2 + constant;
 
-  // Pretty answer
+  // Pretty display of correct answer
   let correctDisplay = "";
   if (a === 1) {
     correctDisplay = "x";
@@ -34,6 +25,7 @@ function generateExpression() {
   } else {
     correctDisplay = `${a}x`;
   }
+
   if (b > 0) {
     correctDisplay += ` + ${b}`;
   } else if (b < 0) {
@@ -41,132 +33,103 @@ function generateExpression() {
   }
 
   return {
-    expr,
-    correctEvalExpr: `${a}*x + ${b}`, // for mathjs checking
-    correctDisplay,
+    expr, // what the flashcard shows
+    correctEvalExpr: `${a}*x + ${b}`, // for symbolic equivalence check
+    correctDisplay, // nicely formatted answer
   };
-}
-
-// --- Generate full set of 10 flashcards ---
-function generateSet() {
-  return Array.from({ length: 10 }, generateExpression);
-}
-
-// --- Equivalence check with normalization ---
-function isEquivalent(input, correctEvalExpr) {
-  try {
-    const normalizedInput = normalizeInput(input);
-    const normalizedCorrect = normalizeInput(correctEvalExpr);
-
-    const simplifiedInput = math.simplify(normalizedInput);
-    const simplifiedCorrect = math.simplify(normalizedCorrect);
-
-    return simplifiedInput.equals(simplifiedCorrect);
-  } catch (err) {
-    console.error("❌ Error in isEquivalent:", err);
-    return false;
-  }
 }
 
 export default function App() {
-  const [cards, setCards] = useState([]);
-  const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState([]);
-  const [showKey, setShowKey] = useState(false);
+  const [flashcards, setFlashcards] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [showResults, setShowResults] = useState(false);
 
   const startPractice = () => {
-    const newSet = generateSet();
-    setCards(newSet);
-    setCurrent(0);
-    setAnswers([]);
-    setShowKey(false);
+    const newSet = Array.from({ length: 10 }, () => generateExpression());
+    setFlashcards(newSet);
+    setAnswers({});
+    setShowResults(false);
   };
 
-  const handleAnswer = (e) => {
-    const newAnswers = [...answers];
-    newAnswers[current] = e.target.value;
-    setAnswers(newAnswers);
+  const handleAnswer = (index, value) => {
+    setAnswers({ ...answers, [index]: value });
   };
 
-  const nextCard = () => {
-    if (current < cards.length - 1) {
-      setCurrent(current + 1);
-    } else {
-      setShowKey(true);
+  const checkEquivalence = (userInput, correctExpr) => {
+    try {
+      const x = Math.floor(Math.random() * 10) + 1;
+      const userVal = evaluate(parse(userInput).toString(), { x });
+      const correctVal = evaluate(correctExpr, { x });
+      return Math.abs(userVal - correctVal) < 1e-6;
+    } catch {
+      return false;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6 text-center">Algebra Flashcards</h1>
-
-      {!cards.length && (
+    <div className="p-6 max-w-3xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Algebra Flashcards</h1>
+      {!flashcards.length ? (
         <button
           onClick={startPractice}
-          className="px-6 py-3 bg-blue-600 text-white rounded-2xl shadow hover:bg-blue-700"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
         >
           Start Practice
         </button>
-      )}
-
-      {cards.length > 0 && !showKey && (
-        <div className="w-full max-w-md bg-white p-6 rounded-2xl shadow">
-          <p className="text-lg font-medium mb-4">
-            Card {current + 1} of {cards.length}
-          </p>
-          <p className="text-xl font-semibold mb-4">
-            Simplify: <code>{cards[current].expr}</code>
-          </p>
-          <input
-            type="text"
-            value={answers[current] || ""}
-            onChange={handleAnswer}
-            placeholder="Enter simplified expression"
-            className="w-full border p-2 rounded mb-4"
-          />
+      ) : !showResults ? (
+        <div>
+          {flashcards.map((card, i) => (
+            <div key={i} className="mb-4 p-4 border rounded">
+              <p className="font-semibold">Q{i + 1}: {card.expr}</p>
+              <input
+                type="text"
+                placeholder="Your answer"
+                value={answers[i] || ""}
+                onChange={(e) => handleAnswer(i, e.target.value)}
+                className="border p-2 w-full mt-2"
+              />
+            </div>
+          ))}
           <button
-            onClick={nextCard}
-            className="px-4 py-2 bg-green-600 text-white rounded-2xl shadow hover:bg-green-700"
+            onClick={() => setShowResults(true)}
+            className="bg-green-500 text-white px-4 py-2 rounded"
           >
-            {current === cards.length - 1 ? "Finish" : "Next"}
+            Submit
           </button>
         </div>
-      )}
-
-      {showKey && (
-        <div className="w-full max-w-2xl bg-white p-6 rounded-2xl shadow">
-          <h2 className="text-2xl font-bold mb-4">Answer Key</h2>
-          {cards.map((card, i) => {
-            const correct = isEquivalent(answers[i], card.correctEvalExpr);
+      ) : (
+        <div>
+          <h2 className="text-xl font-bold mb-2">Answer Key</h2>
+          {flashcards.map((card, i) => {
+            const correct = checkEquivalence(
+              answers[i] || "",
+              card.correctEvalExpr
+            );
             return (
-              <div key={i} className="mb-3">
+              <div key={i} className="mb-2">
                 <p>
                   <strong>Q{i + 1}:</strong> {card.expr}
-                </p>
-                <p>
+                  <br />
                   Your Answer: {answers[i] || "(none)"}{" "}
-                  {correct ? (
-                    <span className="text-green-600 font-bold">✓</span>
-                  ) : (
-                    <span className="text-red-600 font-bold">✗</span>
-                  )}
+                  {correct ? "✓" : "✗"}
+                  <br />
+                  Correct Answer: {card.correctDisplay}
                 </p>
-                <p>Correct Answer: {card.correctDisplay}</p>
               </div>
             );
           })}
           <p className="mt-4 font-bold">
             Score:{" "}
             {
-              cards.filter((c, i) =>
-                isEquivalent(answers[i], c.correctEvalExpr)
+              flashcards.filter((card, i) =>
+                checkEquivalence(answers[i] || "", card.correctEvalExpr)
               ).length
             }
-            /{cards.length}
+            /{flashcards.length}
           </p>
           <button
             onClick={startPractice}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-2xl shadow hover:bg-blue-700"
+            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
           >
             Try Another Set
           </button>
